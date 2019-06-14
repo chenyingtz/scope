@@ -8,6 +8,8 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/weaveworks/scope/common/xfer"
+	"runtime/debug"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -229,6 +231,8 @@ type Report struct {
 
 // MakeReport makes a clean report, ready to Merge() other reports into.
 func MakeReport() Report {
+	debug.PrintStack()
+	log.Infof("[MakeReport] Report, Pod=%+v", MakeTopology().WithShape(Heptagon).WithLabel("pod", "pods"))
 	return Report{
 		Endpoint: MakeTopology(),
 

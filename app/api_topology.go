@@ -13,6 +13,7 @@ import (
 	"github.com/weaveworks/scope/render"
 	"github.com/weaveworks/scope/render/detailed"
 	"github.com/weaveworks/scope/report"
+	"runtime/debug"
 )
 
 const (
@@ -76,6 +77,7 @@ func handleNode(ctx context.Context, renderer render.Renderer, transformer rende
 		nodes.Filtered--
 	}
 	rawNode := detailed.MakeNode(topologyID, rc, nodes.Nodes, node)
+	debug.PrintStack()
 	respondWith(w, http.StatusOK, APINode{Node: detailed.CensorNode(rawNode, censorCfg)})
 }
 
@@ -86,6 +88,7 @@ func handleWebsocket(
 	w http.ResponseWriter,
 	r *http.Request,
 ) {
+	debug.PrintStack()
 	if err := r.ParseForm(); err != nil {
 		respondWith(w, http.StatusInternalServerError, err)
 		return

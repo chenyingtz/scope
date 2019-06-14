@@ -6,9 +6,11 @@ import (
 	"github.com/ugorji/go/codec"
 
 	log "github.com/sirupsen/logrus"
+	"runtime/debug"
 )
 
 func respondWith(w http.ResponseWriter, code int, response interface{}) {
+	debug.PrintStack()
 	if err, ok := response.(error); ok {
 		log.Errorf("Error %d: %v", code, err)
 		response = err.Error()

@@ -18,6 +18,7 @@ import (
 	"github.com/weaveworks/scope/probe/kubernetes"
 	"github.com/weaveworks/scope/render"
 	"github.com/weaveworks/scope/report"
+	"runtime/debug"
 )
 
 const (
@@ -537,6 +538,7 @@ func (r *Registry) walk(f func(APITopologyDesc)) {
 func (r *Registry) makeTopologyList(rep Reporter) CtxHandlerFunc {
 	return func(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 		timestamp := deserializeTimestamp(req.URL.Query().Get("timestamp"))
+		debug.PrintStack()
 		report, err := rep.Report(ctx, timestamp)
 		if err != nil {
 			respondWith(w, http.StatusInternalServerError, err)

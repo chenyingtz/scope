@@ -8,6 +8,7 @@ import (
 
 	"github.com/weaveworks/scope/probe/host"
 	"github.com/weaveworks/scope/report"
+	log "github.com/sirupsen/logrus"
 )
 
 // Raw report handler
@@ -15,6 +16,8 @@ func makeRawReportHandler(rep Reporter) CtxHandlerFunc {
 	return func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		timestamp := deserializeTimestamp(r.URL.Query().Get("timestamp"))
 		rawReport, err := rep.Report(ctx, timestamp)
+		log.Printf("[makeRawReportHandler] rawReport=%+v", rawReport)
+		log.Printf("[makeRawReportHandler] rawReport, err=%+v", err)
 		if err != nil {
 			respondWith(w, http.StatusInternalServerError, err)
 			return

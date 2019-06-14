@@ -329,6 +329,8 @@ func (r *Reporter) Report() (report.Report, error) {
 		return result, err
 	}
 	podTopology, err := r.podTopology(services, deployments, daemonSets, statefulSets, cronJobs, jobs)
+	log.Printf("[Report] podTopology=%+v\n", podTopology)
+	log.Printf("[Report] podTopology, err=%+v\n", err)
 	if err != nil {
 		return result, err
 	}
@@ -678,19 +680,24 @@ func (r *Reporter) podTopology(services []Service, deployments []Deployment, dae
 		// filter out non-local pods: we only want to report local ones for performance reasons.
 		if r.nodeName != "" {
 			if p.NodeName() != r.nodeName {
+				log.Printf("[podTopology] p.NodeName(%s) != r.nodeName (%s)\n", p.NodeName(), r.nodeName)
 				return nil
 			}
 		} else if localPodUIDs != nil {
 			if _, ok := localPodUIDs[p.UID()]; !ok {
+				log.Printf("[podTopology] can't find p.UID(%s), localPodUIDs=%+v\n", p.UID(), localPodUIDs)
 				return nil
 			}
 		}
 		for _, selector := range selectors {
 			selector(p)
 		}
+
+		log.Printf("[podTopology] p.GetNode(r.probeID=%s): %+v\n", r.probeID, p.GetNode(r.probeID))
 		pods.AddNode(p.GetNode(r.probeID))
 		return nil
 	})
+	log.Printf("[podTopology] pods=%+v\n", pods)
 	return pods, err
 }
 
